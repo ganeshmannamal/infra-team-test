@@ -12,6 +12,9 @@ Limitations and improvements:
  - Segregate ECS Fargate resources into seperate Pulimi project, allowing for independent application deployments
  - Setup route53 DNS and ACM certificate for the web-ui endpoint for more secure access via https
 
+
+![aws infra network diagram](aws-infra.png "AWS Infra Network Diagram")
+reference: https://excalidraw.com/#json=dnrE8rABHsCV20MJHKBg6,ZAIC1rHib4OhQsvaEWCllQ
 ## Local Setup
 
 install docker on your machine: [Install Docker](https://docs.docker.com/engine/install/)
