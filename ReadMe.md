@@ -1,7 +1,14 @@
 # How to Run
 
 ## AWS Setup
-This project uses Pulimi to deploy the resorurces to AWS Cloud. For this POC we are working based on a few assumptions
+This project uses Pulimi to deploy the resorurces to AWS Cloud. To run the project:
+
+```
+cd iac 
+pulumi up
+```
+
+For this POC we are working based on a few assumptions
 
  - Applications are deployed to AWS to run on ECS Fargate
  - After depoloyment application can be accessed by using the URL `http://<web-ui-url>` on http port. Where `web-ui-url` can be found from the Pulimi output.
