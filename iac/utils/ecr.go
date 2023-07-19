@@ -7,6 +7,7 @@ import (
 
 	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/ecr"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config"
 )
 
 type ECRRepository struct {
@@ -20,6 +21,8 @@ type ECRRepository struct {
 func NewECRRepository(ctx *pulumi.Context, name string, opts ...pulumi.ResourceOption) (*ECRRepository, error) {
 	var resource ECRRepository
 
+	config := config.New(ctx, "network")
+
 	err := ctx.RegisterComponentResource("air-tek:infra:ecr", name, &resource, opts...)
 	if err != nil {
 		return nil, err
@@ -27,6 +30,11 @@ func NewECRRepository(ctx *pulumi.Context, name string, opts ...pulumi.ResourceO
 
 	repo, err := ecr.NewRepository(ctx, name, &ecr.RepositoryArgs{
 		ForceDelete: pulumi.Bool(true),
+		Tags: &pulumi.StringMap{
+			"air-tek:project": pulumi.String(ctx.Project()),
+			"air-tek:stack":   pulumi.String(ctx.Stack()),
+			"air-tek:network": pulumi.String(config.Require("name")),
+		},
 	}, pulumi.Parent(&resource))
 	if err != nil {
 		return nil, err

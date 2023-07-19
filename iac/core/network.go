@@ -40,6 +40,11 @@ func NewNetwork(ctx *pulumi.Context, opts ...pulumi.ResourceOption) (*Network, e
 		EnableDnsSupport:   pulumi.Bool(true),
 		EnableDnsHostnames: pulumi.Bool(true),
 		InstanceTenancy:    pulumi.String("default"),
+		Tags: &pulumi.StringMap{
+			"air-tek:project": pulumi.String(ctx.Project()),
+			"air-tek:stack":   pulumi.String(ctx.Stack()),
+			"air-tek:network": pulumi.String(config.Require("name")),
+		},
 	}, pulumi.Parent(&resource))
 
 	if err != nil {
@@ -56,6 +61,11 @@ func NewNetwork(ctx *pulumi.Context, opts ...pulumi.ResourceOption) (*Network, e
 		CidrBlock:           pulumi.String("10.1.1.0/24"),
 		MapPublicIpOnLaunch: pulumi.Bool(true),
 		AvailabilityZone:    pulumi.String(availabilityZones.Names[0]),
+		Tags: &pulumi.StringMap{
+			"air-tek:project": pulumi.String(ctx.Project()),
+			"air-tek:stack":   pulumi.String(ctx.Stack()),
+			"air-tek:network": pulumi.String(config.Require("name")),
+		},
 	}, pulumi.Parent(&resource))
 	if err != nil {
 		return nil, err
@@ -66,6 +76,11 @@ func NewNetwork(ctx *pulumi.Context, opts ...pulumi.ResourceOption) (*Network, e
 		CidrBlock:           pulumi.String("10.1.2.0/24"),
 		MapPublicIpOnLaunch: pulumi.Bool(true),
 		AvailabilityZone:    pulumi.String(availabilityZones.Names[1]),
+		Tags: &pulumi.StringMap{
+			"air-tek:project": pulumi.String(ctx.Project()),
+			"air-tek:stack":   pulumi.String(ctx.Stack()),
+			"air-tek:network": pulumi.String(config.Require("name")),
+		},
 	}, pulumi.Parent(&resource))
 	if err != nil {
 		return nil, err
@@ -76,6 +91,11 @@ func NewNetwork(ctx *pulumi.Context, opts ...pulumi.ResourceOption) (*Network, e
 		CidrBlock:           pulumi.String("10.1.11.0/24"),
 		MapPublicIpOnLaunch: pulumi.Bool(false),
 		AvailabilityZone:    pulumi.String(availabilityZones.Names[0]),
+		Tags: &pulumi.StringMap{
+			"air-tek:project": pulumi.String(ctx.Project()),
+			"air-tek:stack":   pulumi.String(ctx.Stack()),
+			"air-tek:network": pulumi.String(config.Require("name")),
+		},
 	}, pulumi.Parent(&resource))
 	if err != nil {
 		return nil, err
@@ -86,6 +106,11 @@ func NewNetwork(ctx *pulumi.Context, opts ...pulumi.ResourceOption) (*Network, e
 		CidrBlock:           pulumi.String("10.1.12.0/24"),
 		MapPublicIpOnLaunch: pulumi.Bool(false),
 		AvailabilityZone:    pulumi.String(availabilityZones.Names[1]),
+		Tags: &pulumi.StringMap{
+			"air-tek:project": pulumi.String(ctx.Project()),
+			"air-tek:stack":   pulumi.String(ctx.Stack()),
+			"air-tek:network": pulumi.String(config.Require("name")),
+		},
 	}, pulumi.Parent(&resource))
 	if err != nil {
 		return nil, err
@@ -93,6 +118,11 @@ func NewNetwork(ctx *pulumi.Context, opts ...pulumi.ResourceOption) (*Network, e
 
 	igw, err := ec2.NewInternetGateway(ctx, networkName+"-igw", &ec2.InternetGatewayArgs{
 		VpcId: vpc.ID(),
+		Tags: &pulumi.StringMap{
+			"air-tek:project": pulumi.String(ctx.Project()),
+			"air-tek:stack":   pulumi.String(ctx.Stack()),
+			"air-tek:network": pulumi.String(config.Require("name")),
+		},
 	}, pulumi.Parent(&resource))
 	if err != nil {
 		return nil, err
@@ -105,6 +135,11 @@ func NewNetwork(ctx *pulumi.Context, opts ...pulumi.ResourceOption) (*Network, e
 				CidrBlock: pulumi.String("0.0.0.0/0"),
 				GatewayId: igw.ID(),
 			},
+		},
+		Tags: &pulumi.StringMap{
+			"air-tek:project": pulumi.String(ctx.Project()),
+			"air-tek:stack":   pulumi.String(ctx.Stack()),
+			"air-tek:network": pulumi.String(config.Require("name")),
 		},
 	}, pulumi.Parent(&resource))
 	if err != nil {
@@ -128,6 +163,11 @@ func NewNetwork(ctx *pulumi.Context, opts ...pulumi.ResourceOption) (*Network, e
 
 	natGatewayEip, err := ec2.NewEip(ctx, networkName+"-nat-gw-eip", &ec2.EipArgs{
 		Vpc: pulumi.Bool(true),
+		Tags: &pulumi.StringMap{
+			"air-tek:project": pulumi.String(ctx.Project()),
+			"air-tek:stack":   pulumi.String(ctx.Stack()),
+			"air-tek:network": pulumi.String(config.Require("name")),
+		},
 	}, pulumi.Parent(&resource))
 	if err != nil {
 		return nil, err
@@ -136,6 +176,11 @@ func NewNetwork(ctx *pulumi.Context, opts ...pulumi.ResourceOption) (*Network, e
 	natGateway, err := ec2.NewNatGateway(ctx, networkName+"-nat-gw", &ec2.NatGatewayArgs{
 		AllocationId: natGatewayEip.ID(),
 		SubnetId:     publicSubnet1a.ID(),
+		Tags: &pulumi.StringMap{
+			"air-tek:project": pulumi.String(ctx.Project()),
+			"air-tek:stack":   pulumi.String(ctx.Stack()),
+			"air-tek:network": pulumi.String(config.Require("name")),
+		},
 	}, pulumi.Parent(&resource))
 	if err != nil {
 		return nil, err
@@ -147,6 +192,11 @@ func NewNetwork(ctx *pulumi.Context, opts ...pulumi.ResourceOption) (*Network, e
 				CidrBlock:    pulumi.String("0.0.0.0/0"),
 				NatGatewayId: natGateway.ID(),
 			},
+		},
+		Tags: &pulumi.StringMap{
+			"air-tek:project": pulumi.String(ctx.Project()),
+			"air-tek:stack":   pulumi.String(ctx.Stack()),
+			"air-tek:network": pulumi.String(config.Require("name")),
 		},
 	}, pulumi.Parent(&resource))
 	if err != nil {
@@ -199,8 +249,11 @@ func NewNetwork(ctx *pulumi.Context, opts ...pulumi.ResourceOption) (*Network, e
 				},
 			},
 		},
-		Tags: pulumi.StringMap{
-			"Name": pulumi.String("elb allow http,https,egress"),
+		Tags: &pulumi.StringMap{
+			"Name":            pulumi.String("elb allow http,https,egress"),
+			"air-tek:project": pulumi.String(ctx.Project()),
+			"air-tek:stack":   pulumi.String(ctx.Stack()),
+			"air-tek:network": pulumi.String(config.Require("name")),
 		},
 	}, pulumi.Parent(&resource))
 	if err != nil {
@@ -231,7 +284,10 @@ func NewNetwork(ctx *pulumi.Context, opts ...pulumi.ResourceOption) (*Network, e
 			},
 		},
 		Tags: pulumi.StringMap{
-			"Name": pulumi.String("allow web ui elb"),
+			"Name":            pulumi.String("allow web ui elb"),
+			"air-tek:project": pulumi.String(ctx.Project()),
+			"air-tek:stack":   pulumi.String(ctx.Stack()),
+			"air-tek:network": pulumi.String(config.Require("name")),
 		},
 	}, pulumi.Parent(&resource))
 	if err != nil {
@@ -269,7 +325,10 @@ func NewNetwork(ctx *pulumi.Context, opts ...pulumi.ResourceOption) (*Network, e
 			},
 		},
 		Tags: pulumi.StringMap{
-			"Name": pulumi.String("elb web ui ec2"),
+			"Name":            pulumi.String("elb web ui ec2"),
+			"air-tek:project": pulumi.String(ctx.Project()),
+			"air-tek:stack":   pulumi.String(ctx.Stack()),
+			"air-tek:network": pulumi.String(config.Require("name")),
 		},
 	}, pulumi.Parent(&resource))
 	if err != nil {
@@ -300,7 +359,10 @@ func NewNetwork(ctx *pulumi.Context, opts ...pulumi.ResourceOption) (*Network, e
 			},
 		},
 		Tags: pulumi.StringMap{
-			"Name": pulumi.String("allow web api elb"),
+			"Name":            pulumi.String("allow web api elb"),
+			"air-tek:project": pulumi.String(ctx.Project()),
+			"air-tek:stack":   pulumi.String(ctx.Stack()),
+			"air-tek:network": pulumi.String(config.Require("name")),
 		},
 	}, pulumi.Parent(&resource))
 	if err != nil {

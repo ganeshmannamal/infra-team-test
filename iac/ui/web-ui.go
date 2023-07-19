@@ -9,6 +9,7 @@ import (
 	ecsx "github.com/pulumi/pulumi-awsx/sdk/go/awsx/ecs"
 	"github.com/pulumi/pulumi-docker/sdk/v4/go/docker"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config"
 )
 
 type WebUi struct {
@@ -31,6 +32,8 @@ type WebUiArgs struct {
 func NewWebUi(ctx *pulumi.Context, args *WebUiArgs, opts ...pulumi.ResourceOption) (*WebUi, error) {
 
 	var resource WebUi
+
+	config := config.New(ctx, "network")
 
 	err := ctx.RegisterComponentResource("air-tek:infra:application", args.NetworkName+"-web-ui", &resource, opts...)
 	if err != nil {
@@ -121,6 +124,11 @@ func NewWebUi(ctx *pulumi.Context, args *WebUiArgs, opts ...pulumi.ResourceOptio
 				},
 			},
 		},
+		Tags: &pulumi.StringMap{
+			"air-tek:project": pulumi.String(ctx.Project()),
+			"air-tek:stack":   pulumi.String(ctx.Stack()),
+			"air-tek:network": pulumi.String(config.Require("name")),
+		},
 	}, pulumi.Parent(&resource))
 
 	_, err = ecs.NewService(ctx, args.NetworkName+"-web-ui-ecs-service", &ecs.ServiceArgs{
@@ -139,6 +147,11 @@ func NewWebUi(ctx *pulumi.Context, args *WebUiArgs, opts ...pulumi.ResourceOptio
 				ContainerName:  pulumi.String("web-ui"),
 				ContainerPort:  pulumi.Int(5000),
 			},
+		},
+		Tags: &pulumi.StringMap{
+			"air-tek:project": pulumi.String(ctx.Project()),
+			"air-tek:stack":   pulumi.String(ctx.Stack()),
+			"air-tek:network": pulumi.String(config.Require("name")),
 		},
 	}, pulumi.Parent(&resource))
 	if err != nil {

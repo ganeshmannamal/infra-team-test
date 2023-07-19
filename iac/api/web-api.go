@@ -8,6 +8,7 @@ import (
 	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/iam"
 	"github.com/pulumi/pulumi-docker/sdk/v4/go/docker"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config"
 )
 
 type WebApi struct {
@@ -30,6 +31,8 @@ type WebApiArgs struct {
 func NewWebApi(ctx *pulumi.Context, args *WebApiArgs, opts ...pulumi.ResourceOption) (*WebApi, error) {
 
 	var resource WebApi
+
+	config := config.New(ctx, "network")
 
 	err := ctx.RegisterComponentResource("air-tek:infra:application", args.NetworkName+"-web-api", &resource, opts...)
 	if err != nil {
@@ -124,6 +127,11 @@ func NewWebApi(ctx *pulumi.Context, args *WebApiArgs, opts ...pulumi.ResourceOpt
 		RequiresCompatibilities: pulumi.StringArray{pulumi.String("FARGATE")},
 		ExecutionRoleArn:        taskExecRole.Arn,
 		ContainerDefinitions:    containerDef,
+		Tags: &pulumi.StringMap{
+			"air-tek:project": pulumi.String(ctx.Project()),
+			"air-tek:stack":   pulumi.String(ctx.Stack()),
+			"air-tek:network": pulumi.String(config.Require("name")),
+		},
 	}, pulumi.Parent(&resource))
 	if err != nil {
 		return nil, err
@@ -145,6 +153,11 @@ func NewWebApi(ctx *pulumi.Context, args *WebApiArgs, opts ...pulumi.ResourceOpt
 				ContainerName:  pulumi.String("web-api"),
 				ContainerPort:  pulumi.Int(5000),
 			},
+		},
+		Tags: &pulumi.StringMap{
+			"air-tek:project": pulumi.String(ctx.Project()),
+			"air-tek:stack":   pulumi.String(ctx.Stack()),
+			"air-tek:network": pulumi.String(config.Require("name")),
 		},
 	}, pulumi.Parent(&resource))
 	if err != nil {
