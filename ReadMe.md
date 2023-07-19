@@ -15,6 +15,8 @@ Limitations and improvements:
 
 ![aws infra network diagram](aws-infra.png "AWS Infra Network Diagram")
 reference: https://excalidraw.com/#json=dnrE8rABHsCV20MJHKBg6,ZAIC1rHib4OhQsvaEWCllQ
+
+![pulumi graph view](pulumi-graph-view.png "Pulumi graph view")
 ## Local Setup
 
 install docker on your machine: [Install Docker](https://docs.docker.com/engine/install/)
